@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scripture Mastery Quiz</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root {
+    --primary:#6495ED;
+    --primary-dark:#2F4F9D;
+    --bg:#F5F8FF;
+    --card:#fff;
+    --success:#4CAF50;
+    --error:#E74C3C;
+    --text:#1F2A44;
+}
+
+*{box-sizing:border-box;}
+
+body{
+    margin:0;
+    font-family:Poppins,sans-serif;
+    background:var(--bg);
+    color:var(--text);
+}
+
+/* NAV */
+.nav{
+    position:fixed;
+    top:20px;
+    right:30px;
+    display:flex;
+    gap:20px;
+}
+
+.nav a{
+    text-decoration:none;
+    color:var(--primary-dark);
+    font-size:.9em;
+}
+
+/* CENTER WRAP */
+.wrap{
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.card{
+    width:100%;
+    max-width:500px;
+    background:var(--card);
+    padding:30px;
+    border-radius:20px;
+    box-shadow:0 10px 30px rgba(0,0,0,.08);
+    text-align:center;
+}
+
+.progress{
+    height:8px;
+    background:#e0e6ff;
+    border-radius:10px;
+    overflow:hidden;
+    margin-bottom:20px;
+}
+
+.fill{
+    height:100%;
+    width:0%;
+    background:linear-gradient(90deg,var(--primary),var(--primary-dark));
+    transition:.3s;
+}
+
+button.answer{
+    width:100%;
+    padding:14px;
+    margin:8px 0;
+    border:none;
+    border-radius:14px;
+    background:#f0f4ff;
+    cursor:pointer;
+}
+
+.correct{background:var(--success)!important;color:#fff;}
+.wrong{background:var(--error)!important;color:#fff;}
+
+.btn{
+    margin-top:20px;
+    padding:14px;
+    width:100%;
+    border:none;
+    border-radius:14px;
+    background:linear-gradient(90deg,var(--primary),var(--primary-dark));
+    color:white;
+    cursor:pointer;
+}
+
+.hidden{display:none;}
+</style>
+</head>
+
+<body>
+
+<div class="nav">
+    <a href="index.html">Résumé</a>
+    <a href="fromScratch.html">Mission Adventures</a>
+</div>
+
+<div class="wrap">
+<div class="card">
+
+<h1>📖 Scripture Quiz</h1>
+
+<div class="progress"><div id="fill" class="fill"></div></div>
+
+<div id="q"></div>
+<div id="answers"></div>
+
+<button id="start" class="btn">Start Game</button>
+
+</div>
+</div>
+
+<script>
+
+const bank = [
+{q:"I, Nephi, having been born of...",a:"goodly parents",o:["wealthy parents","faithful leaders","goodly parents","strong believers"]},
+{q:"Trust in the Lord with all thine...",a:"heart",o:["mind","strength","heart","soul"]},
+{q:"Adam fell that men might be...",a:"and men are, that they might have joy",o:["redeemed","tested","and men are, that they might have joy","saved"]},
+{q:"If ye love me...",a:"keep my commandments",o:["serve others","follow me","keep my commandments","be baptized"]},
+{q:"Ask, and it shall be given you...",a:"seek, and ye shall find",o:["knock","seek, and ye shall find","pray","believe"]},
+{q:"Faith, if it hath not works, is...",a:"dead, being alone",o:["strong","dead, being alone","powerful","eternal"]},
+{q:"Charity never...",a:"faileth",o:["ends","faileth","stops","dies"]},
+{q:"Pray always, that ye may...",a:"come off conqueror",o:["be strong","come off conqueror","be blessed","win"]},
+{q:"Wherefore, men are free...",a:"to choose liberty and eternal life",o:["to act","to choose liberty and eternal life","to follow","to do good"]},
+{q:"Endure to the end...",a:"and ye shall have eternal life",o:["and be saved","and ye shall have eternal life","and rejoice","and be blessed"]}
+];
+
+let current=0;
+let questions=[];
+
+const qEl=document.getElementById("q");
+const aEl=document.getElementById("answers");
+const start=document.getElementById("start");
+const fill=document.getElementById("fill");
+
+function shuffle(a){
+for(let i=a.length-1;i>0;i--){
+let j=Math.floor(Math.random()*(i+1));
+[a[i],a[j]]=[a[j],a[i]];
+}
+}
+
+function startGame(){
+shuffle(bank);
+questions=bank.slice(0,5);
+current=0;
+start.classList.add("hidden");
+show();
+}
+
+function show(){
+fill.style.width=(current/5*100)+"%";
+
+let item=questions[current];
+qEl.textContent=item.q;
+
+aEl.innerHTML="";
+
+let opts=[...item.o];
+shuffle(opts);
+
+opts.forEach(opt=>{
+let b=document.createElement("button");
+b.className="answer";
+b.textContent=opt;
+
+b.onclick=()=>{
+if(opt===item.a){
+b.classList.add("correct");
+setTimeout(()=>{
+current++;
+if(current===5){
+fill.style.width="100%";
+qEl.textContent="🎉 You did it!";
+aEl.innerHTML="";
+start.textContent="Play Again";
+start.classList.remove("hidden");
+}else{
+show();
+}
+},400);
+}else{
+b.classList.add("wrong");
+setTimeout(()=>{
+qEl.textContent="❌ Incorrect! Restarting...";
+aEl.innerHTML="";
+fill.style.width="0%";
+start.textContent="Restart";
+start.classList.remove("hidden");
+},500);
+}
+};
+
+aEl.appendChild(b);
+});
+}
+
+start.onclick=startGame;
+
+</script>
+
+</body>
+</html>
